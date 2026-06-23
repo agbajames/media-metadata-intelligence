@@ -22,6 +22,12 @@ Python, pandas, scikit-learn, sentence-transformers, FastAPI, Streamlit, pytest,
 
 The baseline classifier achieves `micro_f1 = 0.4106`, `macro_f1 = 0.1840` and `hamming_loss = 0.0525` on the MPST test split at a validation-selected threshold of `0.50`.
 
+## Demo Narrative
+
+In an interview, start with the original problem: movie platforms often need multi-label metadata from limited text, so this project predicts story/content tags from title and synopsis. Then explain the engineering extension – the baseline classifier produces tags and confidence scores, while SentenceTransformer embeddings power semantic search, FastAPI exposes the workflow as a service, and Streamlit makes it easy to demo interactively.
+
+The measurable baseline result is `micro-F1 = 0.4106`, `macro-F1 = 0.1840` and `Hamming loss = 0.0525`. The key limitation is that rare-tag performance is weaker because MPST is imbalanced, so the next improvement would be either per-label threshold calibration or a transformer-based classifier comparison.
+
 ## Engineering Decisions
 
 - Kept classification classical and explainable before moving to advanced models.

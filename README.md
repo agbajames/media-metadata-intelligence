@@ -144,6 +144,10 @@ python scripts/intelligence_report.py \
 
 Sample outputs are documented in [docs/sample_outputs.md](docs/sample_outputs.md).
 
+## Demo Walkthrough
+
+Use the [demo walkthrough](docs/demo_walkthrough.md) for a clean interview flow. The demo starts with a title and synopsis, predicts story tags, retrieves similar movies, inspects structured JSON, tests API endpoints and finishes with the Streamlit UI.
+
 ## FastAPI
 
 Ensure local artifacts exist first:
@@ -228,6 +232,19 @@ The UI demonstrates:
 
 Screenshots can be added later under [docs/screenshots](docs/screenshots).
 
+## Screenshots
+
+Screenshots are captured manually and can be added under [docs/screenshots](docs/screenshots). Suggested placeholders:
+
+| Screenshot | Expected File |
+| --- | --- |
+| Streamlit home | `docs/screenshots/streamlit_home.png` |
+| Streamlit prediction results | `docs/screenshots/streamlit_prediction_results.png` |
+| Streamlit JSON output | `docs/screenshots/streamlit_json_output.png` |
+| FastAPI Swagger docs | `docs/screenshots/fastapi_docs.png` |
+| GitHub Actions CI | `docs/screenshots/github_actions_ci.png` |
+| Repository overview | `docs/screenshots/repo_overview.png` |
+
 ## Makefile Commands
 
 ```bash
@@ -247,6 +264,7 @@ make run-streamlit
 ## Documentation
 
 - [Architecture](docs/architecture.md)
+- [Demo Walkthrough](docs/demo_walkthrough.md)
 - [Model Card](docs/model_card.md)
 - [Sample Outputs](docs/sample_outputs.md)
 - [Portfolio Summary](docs/portfolio_summary.md)
