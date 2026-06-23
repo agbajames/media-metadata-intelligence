@@ -24,8 +24,6 @@ The classification model is a classical TF-IDF + OneVsRest Logistic Regression b
 - [x] FastAPI complete
 - [x] Streamlit demo complete
 - [x] CI added
-- [ ] Docker/deployment planned
-- [ ] Advanced transformer classifier planned
 
 ## Dataset
 
@@ -56,13 +54,13 @@ The system is split into five layers:
 - Baseline tag model – uses TF-IDF text features with OneVsRest Logistic Regression for multi-label classification.
 - Semantic search layer – embeds text with `sentence-transformers/all-MiniLM-L6-v2`, indexes embeddings with sklearn `NearestNeighbors`, and deduplicates recommendations by `imdb_id` and normalised title.
 - API layer – exposes health, tag prediction, semantic search and combined intelligence report endpoints through FastAPI.
-- Streamlit demo layer – provides an interview-ready UI for exploring predictions, recommendations and structured JSON output.
+- Streamlit layer – provides a user-facing UI for exploring predictions, recommendations and structured JSON output.
 
 More detail is available in [docs/architecture.md](docs/architecture.md).
 
 ## Results
 
-Current Phase 2 baseline performance on the MPST test split:
+Baseline model performance on the MPST test split:
 
 | Metric | Value |
 | --- | ---: |
@@ -75,7 +73,7 @@ Current Phase 2 baseline performance on the MPST test split:
 | macro_precision | 0.2561 |
 | macro_recall | 0.1883 |
 
-Macro-F1 is low because many MPST tags are rare and the dataset is imbalanced. The model is intended as a transparent baseline for metadata and recommendation workflows, not as perfect content truth.
+Macro-F1 is low because many MPST tags are rare and the dataset is imbalanced. The model is intended as a transparent baseline for metadata and recommendation workflows.
 
 ## Setup
 
@@ -84,8 +82,6 @@ python -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
 ```
-
-Optional environment variables can be copied from `.env.example`.
 
 ## Reproduce The Pipeline
 
@@ -146,7 +142,7 @@ Sample outputs are documented in [docs/sample_outputs.md](docs/sample_outputs.md
 
 ## Demo Walkthrough
 
-Use the [demo walkthrough](docs/demo_walkthrough.md) for a clean interview flow. The demo starts with a title and synopsis, predicts story tags, retrieves similar movies, inspects structured JSON, tests API endpoints and finishes with the Streamlit UI.
+Use the [demo walkthrough](docs/demo_walkthrough.md) for a guided end-to-end tour of the system. The demo starts with a title and synopsis, predicts story tags, retrieves similar movies, inspects structured JSON, tests API endpoints and finishes with the Streamlit UI.
 
 ## FastAPI
 
@@ -234,7 +230,7 @@ Screenshots can be added later under [docs/screenshots](docs/screenshots).
 
 ## Screenshots
 
-Screenshots are captured manually and can be added under [docs/screenshots](docs/screenshots). Suggested placeholders:
+Screenshots are available under [docs/screenshots](docs/screenshots), and show the Streamlit interface, tag prediction results, structured JSON output, FastAPI documentation, GitHub Actions CI status and repository overview.
 
 | Screenshot | Expected File |
 | --- | --- |
@@ -285,4 +281,3 @@ GitHub Actions runs the lightweight test suite on push and pull request. CI does
 - richer Streamlit polish and screenshots
 - threshold calibration and per-tag diagnostics
 - stronger text classification models
-- production-grade vector search if scale requires it
