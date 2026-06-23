@@ -8,4 +8,5 @@ __all__ = [
     "labels",
     "modeling",
     "preprocessing",
+    "semantic_search",
 ]

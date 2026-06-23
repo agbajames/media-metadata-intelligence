@@ -17,6 +17,11 @@ models/*.pkl
 models/*.pickle
 !models/.gitkeep
 
+artifacts/search/*.npy
+artifacts/search/*.joblib
+artifacts/search/*.parquet
+!artifacts/search/.gitkeep
+
 reports/*.json
 reports/*.csv
 reports/figures/*

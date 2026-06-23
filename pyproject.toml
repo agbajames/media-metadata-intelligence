@@ -15,6 +15,7 @@ dependencies = [
     "matplotlib",
     "pyarrow",
     "joblib",
+    "sentence-transformers",
 ]
 
 [project.optional-dependencies]
