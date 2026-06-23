@@ -9,4 +9,5 @@ __all__ = [
     "modeling",
     "preprocessing",
     "semantic_search",
+    "api",
 ]

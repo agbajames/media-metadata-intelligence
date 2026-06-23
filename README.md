@@ -30,14 +30,21 @@ Phase 3 adds semantic retrieval:
 - Reusable local search artifacts
 - Similar-content and combined intelligence report CLIs
 
+Phase 4 adds a FastAPI service:
+
+- Health and service metadata endpoints
+- Tag prediction, semantic search, and combined intelligence endpoints
+- Cached local artifact loading for models and search indexes
+- Clear error responses when required artifacts are missing
+
 ## Planned Phases
 
 1. Dataset loading, validation, EDA, and preprocessing
 2. TF-IDF + OneVsRest logistic regression baseline and evaluation
 3. Semantic search and similar-content recommendation
-4. Structured metadata JSON generation
-5. Transformer or embedding-based tagging models
-6. FastAPI service and Streamlit interface
+4. FastAPI service
+5. Streamlit interface and deployment packaging
+6. Transformer or embedding-based tagging models
 
 ## Dataset
 
@@ -159,6 +166,63 @@ python scripts/intelligence_report.py \
 
 This combines Phase 2 tag prediction with Phase 3 semantic search in one JSON object. It requires both the trained baseline model and the search artifacts.
 
+## Run API
+
+Before starting the API, make sure the local model and search artifacts exist:
+
+```bash
+python scripts/train_baseline.py
+python scripts/build_search_index.py
+```
+
+Then run:
+
+```bash
+python scripts/run_api.py
+```
+
+The API defaults to `http://127.0.0.1:8000`.
+
+Endpoints:
+
+- `GET /`
+- `GET /health`
+- `POST /predict-tags`
+- `POST /search-similar`
+- `POST /intelligence-report`
+
+Health check:
+
+```bash
+curl http://127.0.0.1:8000/health
+```
+
+Predict tags:
+
+```bash
+curl -X POST http://127.0.0.1:8000/predict-tags \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Example Film","synopsis":"A detective investigates a violent murder while uncovering a dark family secret.","threshold":0.35}'
+```
+
+Search similar content:
+
+```bash
+curl -X POST http://127.0.0.1:8000/search-similar \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Example Film","synopsis":"A detective investigates a violent murder while uncovering a dark family secret.","top_k":5}'
+```
+
+Combined intelligence report:
+
+```bash
+curl -X POST http://127.0.0.1:8000/intelligence-report \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Example Film","synopsis":"A detective investigates a violent murder while uncovering a dark family secret.","top_k_similar":5}'
+```
+
+Streamlit UI and deployment are planned for later phases.
+
 ## Retrieval Concepts
 
 - Tag prediction assigns likely MPST labels to a new title and synopsis.
@@ -172,8 +236,6 @@ This combines Phase 2 tag prediction with Phase 3 semantic search in one JSON ob
 - `Hamming loss` is the fraction of individual tag decisions that are wrong. Lower is better.
 
 Micro and macro precision/recall are also reported to show whether the model is over-predicting or under-predicting tags.
-
-FastAPI and Streamlit are planned for later phases.
 
 ## Tests
 

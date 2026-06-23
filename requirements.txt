@@ -6,3 +6,6 @@ pyarrow
 pytest
 joblib
 sentence-transformers
+fastapi
+uvicorn
+httpx
