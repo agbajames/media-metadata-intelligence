@@ -4,6 +4,8 @@ __all__ = [
     "config",
     "data_loader",
     "eda",
+    "evaluation",
     "labels",
+    "modeling",
     "preprocessing",
 ]

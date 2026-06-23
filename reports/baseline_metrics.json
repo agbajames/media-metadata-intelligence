@@ -1,0 +1,27 @@
+{
+  "model_name": "TF-IDF + OneVsRest Logistic Regression",
+  "model_version": "baseline_tfidf_logreg_v1",
+  "selected_threshold": 0.5,
+  "validation_metrics_at_selected_threshold": {
+    "micro_f1": 0.41813468058233066,
+    "macro_f1": 0.18883716081376803,
+    "hamming_loss": 0.05195182896790774,
+    "micro_precision": 0.39906103286384975,
+    "micro_recall": 0.43912314995811225,
+    "macro_precision": 0.2389630237393991,
+    "macro_recall": 0.1966437255742783
+  },
+  "test_metrics": {
+    "micro_f1": 0.4105847204438754,
+    "macro_f1": 0.18398179237378193,
+    "hamming_loss": 0.052463126703579534,
+    "micro_precision": 0.39580333264760337,
+    "micro_recall": 0.4265129682997118,
+    "macro_precision": 0.2561372860845262,
+    "macro_recall": 0.18826045678799283
+  },
+  "train_size": 9489,
+  "validation_size": 2373,
+  "test_size": 2966,
+  "number_of_tags": 71
+}

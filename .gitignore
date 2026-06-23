@@ -12,6 +12,11 @@ data/processed/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 
+models/*.joblib
+models/*.pkl
+models/*.pickle
+!models/.gitkeep
+
 reports/*.json
 reports/*.csv
 reports/figures/*
