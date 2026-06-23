@@ -37,14 +37,22 @@ Phase 4 adds a FastAPI service:
 - Cached local artifact loading for models and search indexes
 - Clear error responses when required artifacts are missing
 
+Phase 5 adds a Streamlit demo UI:
+
+- Movie title and synopsis input
+- Adjustable tag threshold and similar-content count
+- Predicted tag table with confidence scores
+- Similar-content recommendations
+- Structured JSON and system artifact status
+
 ## Planned Phases
 
 1. Dataset loading, validation, EDA, and preprocessing
 2. TF-IDF + OneVsRest logistic regression baseline and evaluation
 3. Semantic search and similar-content recommendation
 4. FastAPI service
-5. Streamlit interface and deployment packaging
-6. Transformer or embedding-based tagging models
+5. Streamlit demo interface
+6. Deployment packaging and transformer or embedding-based tagging models
 
 ## Dataset
 
@@ -222,6 +230,31 @@ curl -X POST http://127.0.0.1:8000/intelligence-report \
 ```
 
 Streamlit UI and deployment are planned for later phases.
+
+## Run Streamlit Demo
+
+Before starting the Streamlit demo, make sure the local model and search artifacts exist:
+
+```bash
+python scripts/train_baseline.py
+python scripts/build_search_index.py
+```
+
+Then run:
+
+```bash
+python scripts/run_streamlit.py
+```
+
+The UI demonstrates:
+
+- multi-label tag prediction from title and synopsis
+- confidence scores with an adjustable threshold
+- deduplicated semantic similar-content recommendations
+- combined structured metadata JSON
+- local artifact availability and model information
+
+Docker, deployment, and a fuller hosted UI can be added later.
 
 ## Retrieval Concepts
 

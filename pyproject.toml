@@ -18,6 +18,7 @@ dependencies = [
     "sentence-transformers",
     "fastapi",
     "uvicorn",
+    "streamlit",
 ]
 
 [project.optional-dependencies]

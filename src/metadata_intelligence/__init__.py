@@ -3,6 +3,7 @@
 __all__ = [
     "config",
     "data_loader",
+    "demo",
     "eda",
     "evaluation",
     "labels",
