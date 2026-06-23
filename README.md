@@ -1,64 +1,37 @@
-# Media Metadata Intelligence System
+# Media Metadata Intelligence System – Multi-label Tagging, Search and Recommendation
 
-Multi-label tagging, search, and recommendation for movie metadata.
+An end-to-end NLP portfolio project for turning movie titles and synopses into structured metadata, predicted story tags and similar-content recommendations.
 
-This project builds a reproducible NLP system that predicts multiple content and story tags from a movie title and synopsis, produces structured metadata JSON, evaluates multi-label performance, and later supports semantic search and similar-content recommendation.
+## What It Does
 
-## Current Phase
+This system:
 
-Phase 1 focused on the data foundation:
+- predicts multiple movie/story tags from a title and synopsis
+- returns confidence scores for predicted tags
+- produces structured metadata JSON for downstream products and APIs
+- evaluates multi-label performance with micro-F1, macro-F1 and Hamming loss
+- supports semantic search and similar-content recommendation
+- exposes CLI, FastAPI and Streamlit interfaces
 
-- Project scaffold and configuration
-- MPST dataset loading and validation
-- Multi-label tag parsing and binarisation utilities
-- Conservative text preprocessing
-- Exploratory data analysis reports and figures
-- Processed dataset export for later modelling
+The classification model is a classical TF-IDF + OneVsRest Logistic Regression baseline. Sentence embeddings are used separately for semantic search and recommendation.
 
-Phase 2 adds a classical machine learning baseline:
+## Project Status
 
-- TF-IDF text features from combined title and synopsis
-- OneVsRest logistic regression for multi-label tag prediction
-- Validation-only threshold tuning
-- Final test-set evaluation
-- Structured JSON prediction output
-
-Phase 3 adds semantic retrieval:
-
-- Sentence embeddings with `sentence-transformers/all-MiniLM-L6-v2`
-- Cosine nearest-neighbor search with scikit-learn
-- Reusable local search artifacts
-- Similar-content and combined intelligence report CLIs
-
-Phase 4 adds a FastAPI service:
-
-- Health and service metadata endpoints
-- Tag prediction, semantic search, and combined intelligence endpoints
-- Cached local artifact loading for models and search indexes
-- Clear error responses when required artifacts are missing
-
-Phase 5 adds a Streamlit demo UI:
-
-- Movie title and synopsis input
-- Adjustable tag threshold and similar-content count
-- Predicted tag table with confidence scores
-- Similar-content recommendations
-- Structured JSON and system artifact status
-
-## Planned Phases
-
-1. Dataset loading, validation, EDA, and preprocessing
-2. TF-IDF + OneVsRest logistic regression baseline and evaluation
-3. Semantic search and similar-content recommendation
-4. FastAPI service
-5. Streamlit demo interface
-6. Deployment packaging and transformer or embedding-based tagging models
+- [x] Data pipeline complete
+- [x] Baseline multi-label model complete
+- [x] Evaluation pipeline complete
+- [x] Semantic search complete
+- [x] FastAPI complete
+- [x] Streamlit demo complete
+- [x] CI added
+- [ ] Docker/deployment planned
+- [ ] Advanced transformer classifier planned
 
 ## Dataset
 
-This project uses the MPST Movie Plot Synopses with Tags dataset.
+The project uses the MPST Movie Plot Synopses with Tags dataset.
 
-Place the CSV file here:
+Place the raw CSV locally at:
 
 ```text
 data/raw/mpst_full_data.csv
@@ -73,7 +46,36 @@ Expected columns:
 - `split`
 - `synopsis_source`
 
-The `tags` column should contain comma-separated multi-label tags.
+The raw dataset is not committed to this repository. Processed data, trained models, embeddings and search indexes are generated locally and ignored by Git.
+
+## Architecture Overview
+
+The system is split into five layers:
+
+- Data pipeline – validates the MPST CSV, parses comma-separated labels, combines title and synopsis, and prepares local parquet data.
+- Baseline tag model – uses TF-IDF text features with OneVsRest Logistic Regression for multi-label classification.
+- Semantic search layer – embeds text with `sentence-transformers/all-MiniLM-L6-v2`, indexes embeddings with sklearn `NearestNeighbors`, and deduplicates recommendations by `imdb_id` and normalised title.
+- API layer – exposes health, tag prediction, semantic search and combined intelligence report endpoints through FastAPI.
+- Streamlit demo layer – provides an interview-ready UI for exploring predictions, recommendations and structured JSON output.
+
+More detail is available in [docs/architecture.md](docs/architecture.md).
+
+## Results
+
+Current Phase 2 baseline performance on the MPST test split:
+
+| Metric | Value |
+| --- | ---: |
+| selected threshold | 0.50 |
+| micro_f1 | 0.4106 |
+| macro_f1 | 0.1840 |
+| hamming_loss | 0.0525 |
+| micro_precision | 0.3958 |
+| micro_recall | 0.4265 |
+| macro_precision | 0.2561 |
+| macro_recall | 0.1883 |
+
+Macro-F1 is low because many MPST tags are rare and the dataset is imbalanced. The model is intended as a transparent baseline for metadata and recommendation workflows, not as perfect content truth.
 
 ## Setup
 
@@ -83,51 +85,37 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 ```
 
-## Run EDA
+Optional environment variables can be copied from `.env.example`.
+
+## Reproduce The Pipeline
+
+Run exploratory analysis:
 
 ```bash
 python scripts/run_eda.py
 ```
 
-Outputs:
-
-- `reports/eda_summary.json`
-- `reports/top_tags.csv`
-- figures in `reports/figures/`
-
-## Prepare Data
+Prepare processed data:
 
 ```bash
 python scripts/prepare_data.py
 ```
 
-Outputs:
-
-- `data/processed/mpst_processed.parquet`
-- `data/processed/tag_classes.json`
-
-## Train Baseline
+Train the baseline classifier:
 
 ```bash
 python scripts/train_baseline.py
 ```
 
-The baseline uses the original MPST split column:
+Build the semantic search index:
 
-- `train` rows are used only for fitting the TF-IDF + logistic regression model.
-- `val` rows are used only to tune one global probability threshold.
-- `test` rows are used only for final evaluation.
+```bash
+python scripts/build_search_index.py
+```
 
-Outputs:
+## CLI Examples
 
-- `models/baseline_tfidf_logreg.joblib`
-- `reports/baseline_metrics.json`
-- `reports/baseline_thresholds.csv`
-- `reports/baseline_per_tag_report.csv`
-
-Trained model files are ignored by git.
-
-## Predict Tags
+Predict tags:
 
 ```bash
 python scripts/predict_tags.py \
@@ -136,23 +124,7 @@ python scripts/predict_tags.py \
   --threshold 0.35
 ```
 
-The prediction script prints structured JSON with predicted tags sorted by confidence. If `--threshold` is omitted, it uses the tuned threshold from `reports/baseline_metrics.json` when available.
-
-## Build Search Index
-
-```bash
-python scripts/build_search_index.py
-```
-
-This embeds `combined_text` from `data/processed/mpst_processed.parquet` and saves reusable search artifacts:
-
-- `artifacts/search/mpst_embeddings.npy`
-- `artifacts/search/mpst_search_metadata.parquet`
-- `artifacts/search/mpst_nn_index.joblib`
-
-Generated search artifacts are ignored by git.
-
-## Search Similar Content
+Search similar content:
 
 ```bash
 python scripts/search_similar.py \
@@ -161,9 +133,7 @@ python scripts/search_similar.py \
   --top-k 5
 ```
 
-The script returns structured JSON containing ranked similar MPST movies, cosine similarity scores, tags, metadata, and short synopsis previews. Results are deduplicated by `imdb_id` and normalised title so repeated dataset entries do not crowd out the recommendations.
-
-## Intelligence Report
+Generate a combined intelligence report:
 
 ```bash
 python scripts/intelligence_report.py \
@@ -172,24 +142,28 @@ python scripts/intelligence_report.py \
   --top-k 5
 ```
 
-This combines Phase 2 tag prediction with Phase 3 semantic search in one JSON object. It requires both the trained baseline model and the search artifacts.
+Sample outputs are documented in [docs/sample_outputs.md](docs/sample_outputs.md).
 
-## Run API
+## FastAPI
 
-Before starting the API, make sure the local model and search artifacts exist:
+Ensure local artifacts exist first:
 
 ```bash
 python scripts/train_baseline.py
 python scripts/build_search_index.py
 ```
 
-Then run:
+Run the API:
 
 ```bash
 python scripts/run_api.py
 ```
 
-The API defaults to `http://127.0.0.1:8000`.
+Default URL:
+
+```text
+http://127.0.0.1:8000
+```
 
 Endpoints:
 
@@ -229,18 +203,16 @@ curl -X POST http://127.0.0.1:8000/intelligence-report \
   -d '{"title":"Example Film","synopsis":"A detective investigates a violent murder while uncovering a dark family secret.","top_k_similar":5}'
 ```
 
-Streamlit UI and deployment are planned for later phases.
+## Streamlit Demo
 
-## Run Streamlit Demo
-
-Before starting the Streamlit demo, make sure the local model and search artifacts exist:
+Ensure local artifacts exist first:
 
 ```bash
 python scripts/train_baseline.py
 python scripts/build_search_index.py
 ```
 
-Then run:
+Run the demo:
 
 ```bash
 python scripts/run_streamlit.py
@@ -248,30 +220,51 @@ python scripts/run_streamlit.py
 
 The UI demonstrates:
 
-- multi-label tag prediction from title and synopsis
-- confidence scores with an adjustable threshold
-- deduplicated semantic similar-content recommendations
-- combined structured metadata JSON
-- local artifact availability and model information
+- title and synopsis input
+- predicted tags with confidence scores
+- semantic similar-content recommendations
+- structured metadata JSON
+- model and artifact status
 
-Docker, deployment, and a fuller hosted UI can be added later.
+Screenshots can be added later under [docs/screenshots](docs/screenshots).
 
-## Retrieval Concepts
+## Makefile Commands
 
-- Tag prediction assigns likely MPST labels to a new title and synopsis.
-- Semantic search embeds text and retrieves movies with similar meaning, even when exact words differ.
-- Similar-content recommendation uses semantic search results as candidates for "more like this" experiences.
+```bash
+make install
+make test
+make prepare-data
+make eda
+make train-baseline
+make build-search-index
+make predict-sample
+make search-sample
+make intelligence-sample
+make run-api
+make run-streamlit
+```
 
-## Baseline Metrics
+## Documentation
 
-- `micro-F1` measures global precision/recall balance across all movie-tag decisions. Frequent tags have more influence.
-- `macro-F1` averages F1 across tags. Rare tags matter as much as common tags, so this is usually harder.
-- `Hamming loss` is the fraction of individual tag decisions that are wrong. Lower is better.
+- [Architecture](docs/architecture.md)
+- [Model Card](docs/model_card.md)
+- [Sample Outputs](docs/sample_outputs.md)
+- [Portfolio Summary](docs/portfolio_summary.md)
 
-Micro and macro precision/recall are also reported to show whether the model is over-predicting or under-predicting tags.
+## Tests And CI
 
-## Tests
+Run tests locally:
 
 ```bash
 pytest
 ```
+
+GitHub Actions runs the lightweight test suite on push and pull request. CI does not require the raw dataset, trained model, embeddings, Hugging Face downloads or other local artifacts.
+
+## Planned Work
+
+- Docker and deployment packaging
+- richer Streamlit polish and screenshots
+- threshold calibration and per-tag diagnostics
+- stronger text classification models
+- production-grade vector search if scale requires it
